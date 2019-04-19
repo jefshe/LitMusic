@@ -38,20 +38,8 @@ Java_com_jefshe_litmusic_MainActivity_setRecording(JNIEnv *env, jobject instance
 }
 
 JNIEXPORT void JNICALL
-Java_com_jefshe_litmusic_MainActivity_setPlaying(JNIEnv *env, jobject instance,
-                                                              jboolean isPlaying) {
-    __android_log_print(ANDROID_LOG_DEBUG, "native-lib", "Playing? %d", isPlaying);
-    audioEngine.setPlaying(isPlaying);
-}
-
-JNIEXPORT void JNICALL
 Java_com_jefshe_litmusic_MainActivity_stopEngine(JNIEnv *env, jobject instance) {
     audioEngine.stop();
-}
-
-JNIEXPORT void JNICALL
-Java_com_jefshe_litmusic_MainActivity_setLooping(JNIEnv *env, jobject instance, jboolean isOn) {
-    audioEngine.setLooping(isOn);
 }
 
 }// End extern "C"

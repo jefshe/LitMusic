@@ -29,15 +29,11 @@ class MainActivity : AppCompatActivity() {
         val data = BarDataSet(listOf(BarEntry(1.2f, 1.4f)), "Spectrum")
         chart.setData(BarData(data));
         chart.invalidate(); // refresh
-    }
 
-    public override fun onResume() {
-        // Check we have the record permission
         if (isRecordPermissionGranted())
             startEngine()
         else
             requestRecordPermission()
-        super.onResume()
     }
 
     private fun requestRecordPermission() {

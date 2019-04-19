@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef WAVEMAKER2_AUDIOENGINE_H
-#define WAVEMAKER2_AUDIOENGINE_H
+#ifndef LITMUSIC_AUDIOENGINE_H
+#define LITMUSIC_AUDIOENGINE_H
 
 #include <cstdint>
 #include <atomic>
@@ -30,20 +30,15 @@ public:
     void stop();
     void restart();
     aaudio_data_callback_result_t recordingCallback(float *audioData, int32_t numFrames);
-    aaudio_data_callback_result_t playbackCallback(float *audioData, int32_t numFrames);
     void setRecording(bool isRecording);
-    void setPlaying(bool isPlaying);
-    void setLooping(bool isOn);
 
 private:
     std::atomic<bool> mIsRecording = {false};
-    std::atomic<bool> mIsPlaying = {false};
     SoundRecording mSoundRecording;
-    AAudioStream* mPlaybackStream = nullptr;
     AAudioStream* mRecordingStream = nullptr;
 
     void stopStream(AAudioStream *stream) const;
     void closeStream(AAudioStream **stream) const;
 };
 
-#endif //WAVEMAKER2_AUDIOENGINE_H
+#endif //LITMUSIC_AUDIOENGINE_H
