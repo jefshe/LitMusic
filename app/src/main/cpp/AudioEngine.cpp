@@ -90,7 +90,7 @@ void AudioEngine::start(int deviceId) {
     }
 
     AAudioStream_requestStart(mRecordingStream);
-    mAnalyzer.startAnalyzer(mSoundRecording, sampleRate);
+    mAnalyzer.startAnalyzer(&mSoundRecording, sampleRate);
 }
 
 void AudioEngine::stop() {
@@ -118,8 +118,9 @@ aaudio_data_callback_result_t AudioEngine::recordingCallback(float *audioData,
 
 void AudioEngine::setRecording(bool isRecording) {
 
-    if (isRecording)
+    if (isRecording) {
         mSoundRecording.clear();
+    }
     mIsRecording = isRecording;
 }
 

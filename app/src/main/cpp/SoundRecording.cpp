@@ -18,33 +18,37 @@
 #include "SoundRecording.h"
 
 int32_t SoundRecording::write(const float *sourceData, int32_t numSamples) {
-
-    mLock.lock();
+    std::lock_guard<std::mutex> guard(mLock);
     // Check that data will fit, if it doesn't just write as much as we can.
-    if (mData.size() + numSamples > kMaxSamples)
+    if (mData.size() + numSamples > kMaxSamples) {
         numSamples = kMaxSamples - mData.size();
-
+        __android_log_print(ANDROID_LOG_ERROR, __func__, "reached max frames!!");
+    }
     for (int i = 0; i < numSamples; i++)
         mData.push(sourceData[i]);
-    mLock.unlock();
+
+    // Notify anyone reading
+    mDataAvailable.notify_one();
     return numSamples;
 }
 
 int32_t SoundRecording::read(float *targetData, int32_t numSamples){
 
+    std::unique_lock<std::mutex> unique(mLock);
     int32_t framesRead = 0;
-    mLock.lock();
+    // block if not enough data is available
+    if (mData.size() < numSamples)
+        mDataAvailable.wait(unique, [=]{ return mData.size() >= numSamples; });
     while (framesRead < numSamples){
         targetData[framesRead++] = mData.front();
         mData.pop();
     }
-    mLock.unlock();
+
     return framesRead;
 }
 
 void SoundRecording::clear() {
-    mLock.lock();
+    std::lock_guard<std::mutex> guard(mLock);
     std::queue<float> empty;
     std::swap(mData, empty);
-    mLock.unlock();
 }

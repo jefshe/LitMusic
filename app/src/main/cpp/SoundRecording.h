@@ -21,6 +21,7 @@
 #include <array>
 #include <atomic>
 #include <mutex>
+#include <condition_variable>
 #include <queue>
 
 #include "Definitions.h"
@@ -33,10 +34,10 @@ public:
     int32_t write(const float *sourceData, int32_t numSamples);
     int32_t read(float *targetData, int32_t numSamples);
     void clear();
-    static const int32_t getMaxSamples() { return kMaxSamples; };
 
 private:
     std::mutex mLock;
+    std::condition_variable mDataAvailable;
     std::queue<float> mData;
 };
 
