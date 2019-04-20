@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef WAVEMAKER2_SAMPLE_H
-#define WAVEMAKER2_SAMPLE_H
+#ifndef LITMUSIC_SAMPLE_H
+#define LITMUSIC_SAMPLE_H
 
 #include <cstdint>
 #include <array>
 #include <atomic>
+#include <mutex>
+#include <queue>
 
 #include "Definitions.h"
 
@@ -30,15 +32,12 @@ class SoundRecording {
 public:
     int32_t write(const float *sourceData, int32_t numSamples);
     int32_t read(float *targetData, int32_t numSamples);
-    bool isFull() const { return (mBufferIndex == kMaxSamples); };
-    void setReadPositionToStart() { mBufferIndex = 0; };
-    void clear() { mBufferIndex = 0; };
-    int32_t getLength() const { return mBufferIndex; };
+    void clear();
     static const int32_t getMaxSamples() { return kMaxSamples; };
 
 private:
-    std::atomic<int32_t> mBufferIndex { 0 };
-    std::array<float,kMaxSamples> mData { 0 };
+    std::mutex mLock;
+    std::queue<float> mData;
 };
 
-#endif //WAVEMAKER2_SAMPLE_H
+#endif //LITMUSIC_SAMPLE_H

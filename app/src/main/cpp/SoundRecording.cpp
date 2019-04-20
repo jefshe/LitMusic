@@ -19,22 +19,32 @@
 
 int32_t SoundRecording::write(const float *sourceData, int32_t numSamples) {
 
+    mLock.lock();
     // Check that data will fit, if it doesn't just write as much as we can.
-    if (mBufferIndex + numSamples > kMaxSamples) {
-        numSamples = kMaxSamples - mBufferIndex;
-    }
+    if (mData.size() + numSamples > kMaxSamples)
+        numSamples = kMaxSamples - mData.size();
 
-    for (int i = 0; i < numSamples; ++i) {
-        mData[mBufferIndex++] = sourceData[i];
-    }
+    for (int i = 0; i < numSamples; ++i)
+        mData.push(sourceData[i]);
+    mLock.unlock();
     return numSamples;
 }
 
 int32_t SoundRecording::read(float *targetData, int32_t numSamples){
 
     int32_t framesRead = 0;
-    while (framesRead < numSamples && mBufferIndex > 0){
-        targetData[framesRead++] = mData[mBufferIndex--];
+    mLock.lock();
+    while (framesRead < numSamples){
+        targetData[framesRead++] = mData.front();
+        mData.pop();
     }
+    mLock.unlock();
     return framesRead;
+}
+
+void SoundRecording::clear() {
+    mLock.lock();
+    std::queue<float> empty;
+    std::swap(mData, empty);
+    mLock.unlock();
 }

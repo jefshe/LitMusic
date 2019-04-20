@@ -93,9 +93,6 @@ void AudioEngine::start() {
                             AAudio_convertResultToText(result));
         return;
     }
-
-    AudioAnalyzer analyzer;
-    analyzer.analyze(sampleRate);
 }
 
 void AudioEngine::stop() {

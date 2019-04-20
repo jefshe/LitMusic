@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef WAVEMAKER2_SOUNDRECORDINGUTILITIES_H
-#define WAVEMAKER2_SOUNDRECORDINGUTILITIES_H
+#ifndef LITMUSIC_SOUNDRECORDINGUTILITIES_H
+#define LITMUSIC_SOUNDRECORDINGUTILITIES_H
 
 float convertInt16ToFloat(int16_t intValue);
 void convertArrayInt16ToFloat(int16_t *source, float *target, int32_t length);
 void fillArrayWithZeros(float *data, int32_t length);
 void convertArrayMonoToStereo(float *data, int32_t numFrames);
 
-#endif //WAVEMAKER2_SOUNDRECORDINGUTILITIES_H
+#endif //LITMUSIC_SOUNDRECORDINGUTILITIES_H

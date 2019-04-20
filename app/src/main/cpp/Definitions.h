@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef WAVEMAKER2_DEFINITIONS_H
-#define WAVEMAKER2_DEFINITIONS_H
+#ifndef LITMUSIC_DEFINITIONS_H
+#define LITMUSIC_DEFINITIONS_H
 
 constexpr int kChannelCountMono = 1;
 constexpr int kChannelCountStereo = 2;
 constexpr int sampleRate = 20000;
 
-#endif //WAVEMAKER2_DEFINITIONS_H
+#endif //LITMUSIC_DEFINITIONS_H
