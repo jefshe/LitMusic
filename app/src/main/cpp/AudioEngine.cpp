@@ -63,13 +63,16 @@ StreamBuilder makeStreamBuilder(){
     return StreamBuilder(builder, &AAudioStreamBuilder_delete);
 }
 
-void AudioEngine::start() {
+void AudioEngine::start(int deviceId) {
+    // store in case we need to restart
+    mRecordingDevice = deviceId;
 
     // Create the recording stream.
     StreamBuilder recordingBuilder = makeStreamBuilder();
+    AAudioStreamBuilder_setDeviceId(recordingBuilder.get(), deviceId);
     AAudioStreamBuilder_setDirection(recordingBuilder.get(), AAUDIO_DIRECTION_INPUT);
-    AAudioStreamBuilder_setPerformanceMode(recordingBuilder.get(), AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
-    AAudioStreamBuilder_setSharingMode(recordingBuilder.get(), AAUDIO_SHARING_MODE_EXCLUSIVE);
+    AAudioStreamBuilder_setPerformanceMode(recordingBuilder.get(), AAUDIO_PERFORMANCE_MODE_POWER_SAVING);
+    AAudioStreamBuilder_setSharingMode(recordingBuilder.get(), AAUDIO_SHARING_MODE_SHARED);
     AAudioStreamBuilder_setFormat(recordingBuilder.get(), AAUDIO_FORMAT_PCM_FLOAT);
     AAudioStreamBuilder_setSampleRate(recordingBuilder.get(), sampleRate);
     AAudioStreamBuilder_setChannelCount(recordingBuilder.get(), kChannelCountMono);
@@ -86,17 +89,12 @@ void AudioEngine::start() {
         return;
     }
 
-    result = AAudioStream_requestStart(mRecordingStream);
-    if (result != AAUDIO_OK){
-        __android_log_print(ANDROID_LOG_DEBUG, __func__,
-                            "Error starting recording stream %s",
-                            AAudio_convertResultToText(result));
-        return;
-    }
+    AAudioStream_requestStart(mRecordingStream);
+    mAnalyzer.startAnalyzer(mSoundRecording, sampleRate);
 }
 
 void AudioEngine::stop() {
-
+    mAnalyzer.stopAnalyzer();
     stopStream(mRecordingStream);
     closeStream(&mRecordingStream);
 }
@@ -106,23 +104,22 @@ void AudioEngine::restart(){
     static std::mutex restartingLock;
     if (restartingLock.try_lock()){
         stop();
-        start();
+        start(mRecordingDevice);
         restartingLock.unlock();
     }
 }
 
 aaudio_data_callback_result_t AudioEngine::recordingCallback(float *audioData,
                                                              int32_t numFrames) {
-    if (mIsRecording) {
-        int32_t framesWritten = mSoundRecording.write(audioData, numFrames);
-        if (framesWritten == 0) mIsRecording = false;
-    }
+    if (mIsRecording)
+        mSoundRecording.write(audioData, numFrames);
     return AAUDIO_CALLBACK_RESULT_CONTINUE;
 }
 
 void AudioEngine::setRecording(bool isRecording) {
 
-    if (isRecording) mSoundRecording.clear();
+    if (isRecording)
+        mSoundRecording.clear();
     mIsRecording = isRecording;
 }
 

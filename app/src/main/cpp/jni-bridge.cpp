@@ -26,8 +26,11 @@ static AudioEngine audioEngine;
 JNIEXPORT void JNICALL
 Java_com_jefshe_litmusic_MainActivity_startEngine(
         JNIEnv *env,
-        jobject /* this */) {
-    audioEngine.start();
+        jobject instance,
+        jint deviceId) {
+
+    __android_log_print(ANDROID_LOG_DEBUG, "native-lib", "deviceId: %d", deviceId);
+    audioEngine.start(deviceId);
 }
 
 JNIEXPORT void JNICALL

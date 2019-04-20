@@ -24,7 +24,7 @@ int32_t SoundRecording::write(const float *sourceData, int32_t numSamples) {
     if (mData.size() + numSamples > kMaxSamples)
         numSamples = kMaxSamples - mData.size();
 
-    for (int i = 0; i < numSamples; ++i)
+    for (int i = 0; i < numSamples; i++)
         mData.push(sourceData[i]);
     mLock.unlock();
     return numSamples;

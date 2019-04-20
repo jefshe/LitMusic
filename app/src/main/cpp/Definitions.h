@@ -19,6 +19,6 @@
 
 constexpr int kChannelCountMono = 1;
 constexpr int kChannelCountStereo = 2;
-constexpr int sampleRate = 20000;
+constexpr int sampleRate = 40000;
 
 #endif //LITMUSIC_DEFINITIONS_H

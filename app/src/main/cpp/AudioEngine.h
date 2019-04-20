@@ -22,11 +22,12 @@
 #include <memory>
 #include <aaudio/AAudio.h>
 #include "SoundRecording.h"
+#include "AudioAnalyzer.h"
 
 class AudioEngine {
 
 public:
-    void start();
+    void start(int deviceId);
     void stop();
     void restart();
     aaudio_data_callback_result_t recordingCallback(float *audioData, int32_t numFrames);
@@ -36,7 +37,8 @@ private:
     std::atomic<bool> mIsRecording = {false};
     SoundRecording mSoundRecording;
     AAudioStream* mRecordingStream = nullptr;
-
+    int mRecordingDevice;
+    AudioAnalyzer mAnalyzer;
     void stopStream(AAudioStream *stream) const;
     void closeStream(AAudioStream **stream) const;
 };
